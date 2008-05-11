@@ -1,0 +1,11 @@
+# Set up the properties for the database
+db :
+    db_host : hagrid
+    db_name : RMSC
+    db_user : djs
+    db_pass : jordan123
+
+# Messages
+messages:
+    specify_file_name : Must specify a file name for the generated PDF file
+    
