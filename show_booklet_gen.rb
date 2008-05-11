@@ -169,6 +169,9 @@ class ShowBookletGenGlade
       progress.visible = false
       @btnOK.sensitive = true
       @btnCancel.sensitive = true
+      
+      # Now, we want to actually display the pdf
+      system("evince #{pdf_path}")
     end
     
   end
