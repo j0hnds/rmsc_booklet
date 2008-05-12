@@ -34,6 +34,7 @@ class ShowBookletGenGlade
     @progress = @glade.get_widget("ctlProgress")
     @btnOK = @glade.get_widget("btnOK")
     @btnCancel = @glade.get_widget("btnCancel")
+    @chkShowPDF = @glade.get_widget("chkShowPDF")
     load_shows
     @mainWindow = @glade.get_widget("mainWindow")
     @mainWindow.show
@@ -171,7 +172,7 @@ class ShowBookletGenGlade
       @btnCancel.sensitive = true
       
       # Now, we want to actually display the pdf
-      system("evince #{pdf_path}")
+      system("evince #{pdf_path}") if @chkShowPDF.active?
     end
     
   end
