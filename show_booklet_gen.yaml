@@ -9,3 +9,14 @@ db :
 messages:
     specify_file_name : Must specify a file name for the generated PDF file
     
+# Logging controls
+# Levels are:
+#   0 - DEBUG
+#   1 - INFO
+#   2 - WARN
+#   3 - ERROR
+#   4 - FATAL
+#   5 - UNKNOWN
+logging:
+    log_file_name : show_booklet.log
+    log_level : 1

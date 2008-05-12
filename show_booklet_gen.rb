@@ -5,6 +5,7 @@
 require 'libglade2'
 require 'show_booklet_pdf'
 require 'show_booklet_db'
+require 'show_booklet_log'
 
 #
 # The main application window for the Show Booklet Generation. The definition
@@ -35,9 +36,11 @@ class ShowBookletGenGlade
     @btnOK = @glade.get_widget("btnOK")
     @btnCancel = @glade.get_widget("btnCancel")
     @chkShowPDF = @glade.get_widget("chkShowPDF")
+    @log = Log.instance.log
     load_shows
     @mainWindow = @glade.get_widget("mainWindow")
     @mainWindow.show
+    @log.info "Started #{$0} at #{Time.now}"
   end
 
   #
@@ -150,7 +153,10 @@ class ShowBookletGenGlade
     @progress.visible = true
     @btnOK.sensitive = false
     @btnCancel.sensitive = false
+    
     thd = Thread.new(pdf_path, @progress, @db, show_id) do |path, progress, db, show|
+      @log.info "Creating booklet for show (#{show_id}) in #{pdf_path}"
+    
       pdf = ShowBookletPDF.new
       pdf.render_booklet db, show do |pct|
         progress.set_fraction(pct)
@@ -160,6 +166,7 @@ class ShowBookletGenGlade
       end
       
       progress.fraction = 1.0
+      @log.info "Done creating booklet for show (#{show_id}) in #{pdf_path}"
       dlg = Gtk::MessageDialog.new(@mainWindow, 
                                    Gtk::Dialog::DESTROY_WITH_PARENT, 
                                    Gtk::MessageDialog::INFO, 
