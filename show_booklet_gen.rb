@@ -28,7 +28,6 @@ class ShowBookletGenGlade
   def initialize(path_or_data, root = nil, domain = nil, localedir = nil, flag = GladeXML::FILE)
     bindtextdomain(domain, localedir, nil, "UTF-8")
     @glade = GladeXML.new(path_or_data, root, domain, localedir, flag) {|handler| method(handler)}
-    @db = RMSCDB.new
     @selected_show_id = nil
     @cbShow = @glade.get_widget("cbShows")
     @txtFile = @glade.get_widget("txtSelectedFile")
@@ -37,7 +36,15 @@ class ShowBookletGenGlade
     @btnCancel = @glade.get_widget("btnCancel")
     @chkShowPDF = @glade.get_widget("chkShowPDF")
     @log = Log.instance.log
+    begin
+      @db = RMSCDB.new
+    rescue
+      puts "Error connecting to the data base: #{ $!.error }"
+      @log.error "Error connecting to the data base: #{ $!.error }"
+      @db = nil
+    end
     load_shows
+    
     @mainWindow = @glade.get_widget("mainWindow")
     @mainWindow.show
     @log.info "Started #{$0} at #{Time.now}"
@@ -47,6 +54,9 @@ class ShowBookletGenGlade
   # Loads the set of shows found in the DB into the show combo box.
   #
   def load_shows
+    # Short-circuit out if the data base is not connected
+    return if @db.nil?
+    
     res = @db.get_shows
     @list_store = Gtk::ListStore.new(String, String)
     cell_rend = Gtk::CellRendererText.new()
@@ -130,6 +140,16 @@ class ShowBookletGenGlade
   # +widget+: the button that was clicked.
   #
   def on_btnOK_clicked(widget)
+    if @db.nil?
+      dlg = Gtk::MessageDialog.new(@mainWindow, 
+                                   Gtk::Dialog::DESTROY_WITH_PARENT, 
+                                   Gtk::MessageDialog::ERROR, 
+                                   Gtk::MessageDialog::BUTTONS_CLOSE, 
+                                   "Not connected to the database; check log for errors")
+      dlg.run
+      dlg.destroy
+      return
+    end
     pdf_path = @txtFile.text
     generate_pdf pdf_path, @selected_show_id if valid_path? pdf_path and valid_show?
   end
@@ -230,7 +250,7 @@ class ShowBookletGenGlade
   # +widget+: the control that was clicked
   #
   def on_btn_Cancel_clicked(widget)
-    @db.close
+    @db.close unless @db.nil?
     Gtk.main_quit
   end
   
@@ -241,7 +261,7 @@ class ShowBookletGenGlade
   # +arg0+: no idea what this is
   #
   def on_mainWindow_delete_event(widget, arg0)
-    @db.close
+    @db.close unless @db.nil?
     Gtk.main_quit
   end
   
