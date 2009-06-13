@@ -2,6 +2,9 @@ require 'logger'
 require 'singleton'
 require 'show_booklet_config'
 
+#
+# This class handles the logging for the application.
+#
 class Log
     include Singleton
     

@@ -3,7 +3,7 @@ db :
     db_host : hagrid
     db_name : RMSC
     db_user : djs
-    db_pass : jordan123
+    db_pass : delores
 
 # Messages
 messages:
