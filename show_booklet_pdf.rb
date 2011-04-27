@@ -303,6 +303,7 @@ class ShowBookletPDF < PDF::Writer
     text "#{ show_info[SHOW_LOCATION_CITY] }, #{ show_info[SHOW_LOCATION_STATE] }  #{ show_info[SHOW_LOCATION_POSTAL_CODE] }", :justification => :center
     text "Phone: #{ show_info[SHOW_LOCATION_PHONE] }", :justification => :center
     text "Fax: #{ show_info[SHOW_LOCATION_FAX] }", :justification => :center
+    # End of method.
   end
   
 end
